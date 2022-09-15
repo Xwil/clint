@@ -1,0 +1,48 @@
+{
+  "name": "clint",
+  "version": "1.0.0",
+  "keywords": [
+    "cli"
+  ],
+  "type": "module",
+  "main": "dist/index.mjs",
+  "module": "dist/index.mjs",
+  "types": "dist/index.d.ts",
+  "bin": {
+    "clint": "bin/clint.mjs"
+  },
+  "files": [
+    "dist"
+  ],
+  "scripts": {
+    "lint": "eslint .",
+    "dev": "esmo ./src/cli.ts",
+    "start": "esno ./src/cli.ts",
+    "build": "unbuild",
+    "prepublishOnly": "nr build",
+    "release": "bumpp --commit --tag --push && pnpm publish --no-git-checks",
+    "test": "vitest"
+  },
+  "devDependencies": {
+    "@antfu/ni": "^0.18.0",
+    "@types/minimist": "^1.2.2",
+    "@types/node": "^18.7.18",
+    "@typescript-eslint/eslint-plugin": "^5.37.0",
+    "@typescript-eslint/parser": "^5.37.0",
+    "bumpp": "^8.2.1",
+    "cz-conventional-changelog": "^3.3.0",
+    "eslint": "^8.23.1",
+    "eslint-config-alloy": "^4.6.2",
+    "eslint-define-config": "^1.7.0",
+    "eslint-plugin-prettier": "^4.2.1",
+    "esno": "^0.16.3",
+    "minimist": "^1.2.6",
+    "picocolors": "^1.0.0",
+    "prettier": "^2.7.1",
+    "prettier-plugin-organize-imports": "^3.1.1",
+    "rimraf": "^3.0.2",
+    "typescript": "^4.8.3",
+    "unbuild": "^0.8.11",
+    "vitest": "^0.23.2"
+  }
+}
