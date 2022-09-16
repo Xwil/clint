@@ -1,5 +1,5 @@
-// .prettierrc.js
 module.exports = {
+  plugins: ['prettier-plugin-packagejson', 'prettier-plugin-organize-imports'],
   // 一行最多 120 字符
   printWidth: 120,
   // 使用 2 个空格缩进
