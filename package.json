@@ -19,11 +19,11 @@
   ],
   "scripts": {
     "build": "unbuild",
-    "dev": "esmo ./src/cli.ts",
+    "dev": "tsx ./src/cli.ts",
     "prepare": "husky install",
     "prepublishOnly": "nr build",
     "release": "bumpp --commit --tag --push && pnpm publish --no-git-checks",
-    "start": "esno ./src/cli.ts",
+    "start": "tsx ./src/cli.ts",
     "test": "vitest"
   },
   "lint-staged": {
@@ -40,15 +40,19 @@
   },
   "dependencies": {
     "@antfu/ni": "^0.18.0",
+    "execa": "^6.1.0",
+    "listr2": "^5.0.5",
     "minimist": "^1.2.6",
     "picocolors": "^1.0.0",
-    "pkg-up": "^4.0.0"
+    "pkg-up": "^4.0.0",
+    "prompts": "^2.4.2"
   },
   "devDependencies": {
     "@commitlint/cli": "^17.1.2",
     "@commitlint/config-conventional": "^17.1.0",
     "@types/minimist": "^1.2.2",
     "@types/node": "^18.7.18",
+    "@types/prompts": "^2.0.14",
     "@typescript-eslint/eslint-plugin": "^5.37.0",
     "@typescript-eslint/parser": "^5.37.0",
     "bumpp": "^8.2.1",
@@ -57,13 +61,13 @@
     "eslint-config-alloy": "^4.6.2",
     "eslint-define-config": "^1.7.0",
     "eslint-plugin-prettier": "^4.2.1",
-    "esno": "^0.16.3",
     "husky": "^8.0.1",
     "lint-staged": "^13.0.3",
     "prettier": "^2.7.1",
     "prettier-plugin-organize-imports": "^3.1.1",
     "prettier-plugin-packagejson": "^2.2.18",
     "rimraf": "^3.0.2",
+    "tsx": "^3.9.0",
     "type-fest": "^2.19.0",
     "typescript": "^4.8.3",
     "unbuild": "^0.8.11",

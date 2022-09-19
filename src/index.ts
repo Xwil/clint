@@ -1,3 +1,10 @@
-console.log('cli');
+import { generators, registerGenerator } from './generator';
+import { defineEslintGenerator } from './generators/eslint';
+import { definePrettierGenerator } from './generators/prettier';
 
-export default {};
+export const setupGenerators = () => {
+  registerGenerator(defineEslintGenerator());
+  registerGenerator(definePrettierGenerator());
+
+  return generators;
+};

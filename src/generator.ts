@@ -2,8 +2,7 @@ import { Factory } from './factory';
 
 export interface IGenerator {
   name: string;
-  visible: boolean;
-  deps: string[];
+  descriptions?: string;
   install: (factory: Factory) => Promise<any>;
   uninstall?: (factory: Factory) => Promise<void>;
 }
@@ -15,11 +14,11 @@ export function registerGenerator(generator: IGenerator) {
 }
 
 export function getGenerator(name: string) {
-  generators.get(name);
+  return generators.get(name);
 }
 
-export function useGenerator(generator: IGenerator) {
-  generator.install(new Factory());
+export async function useGenerator(generator: IGenerator) {
+  await generator.install(new Factory());
 }
 
 export function defineGenerator(generator: IGenerator) {
