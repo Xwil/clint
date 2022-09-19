@@ -1,18 +1,18 @@
 import { join } from 'path';
-import { defineGenerator } from 'src/generator';
+import { defineGenerator } from '../../generator';
+import { __dirname } from '../../utils';
 
 export function defineEslintGenerator() {
   return defineGenerator({
-    name: 'eslint',
-    visible: true,
-    deps: ['eslint', 'define-eslint-plugin'],
+    name: 'ESLint',
+    descriptions: 'Will install Prettier as well.',
     async install(factory) {
-      // add deps
-      factory.addDevDependency('eslint', '*');
-      factory.addDevDependency('eslint-define-plugin', '');
+      factory.addDevDependency('eslint');
+      factory.addDevDependency('eslint-define-config');
+      await factory.install();
 
-      // create rcs
-      factory.createFileFromTemplate('.eslintrc.cjs', join(__dirname, './eslintrc.template'));
+      await factory.createFileFromTemplate('.eslintrc.cjs', join(__dirname(import.meta), './eslintrc.template'));
+      await factory.createFileFromTemplate('.eslintignore', join(__dirname(import.meta), './eslintignore.template'));
     },
   });
 }

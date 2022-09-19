@@ -1,6 +1,8 @@
+import { detect, getCommand } from '@antfu/ni';
 import assert from 'assert';
+import { execaCommand } from 'execa';
 import { existsSync, readFileSync, rmSync, writeFileSync } from 'fs';
-import { join, resolve } from 'path';
+import { dirname, join } from 'path';
 import { pkgUpSync } from 'pkg-up';
 import type { PackageJson } from 'type-fest';
 
@@ -8,13 +10,18 @@ export class Factory {
   // public cwd: string;
   public packageJsonPath: string;
   public projectPath: string;
+  private dependencies: string[];
+  private devDependencies: string[];
 
   public constructor() {
     const cwd = process.cwd();
     this.packageJsonPath = pkgUpSync({ cwd }) || '';
     // TODO create new package.json if not found
     assert(!!this.packageJsonPath, `package.json not found at ${cwd} or parent folders`);
-    this.projectPath = resolve(this.packageJsonPath, './');
+    this.projectPath = dirname(this.packageJsonPath);
+
+    this.dependencies = [];
+    this.devDependencies = [];
   }
 
   /** create new file
@@ -29,7 +36,8 @@ export class Factory {
 
   public async createFileFromTemplate(path: string, templatePath: string) {
     const filePath = join(this.projectPath, path);
-    assert(existsSync(filePath), `${filePath} already exist`);
+
+    assert(!existsSync(filePath), `${filePath} already exist`);
     const template = readFileSync(templatePath, 'utf8');
     writeFileSync(filePath, template, 'utf8');
   }
@@ -59,27 +67,42 @@ export class Factory {
     this.packageJson = packageJson;
   }
 
-  public async addDependency(name: string, version: string, override?: boolean) {
-    this.addDepInternal(name, version, override);
+  public addDependency(name: string, version?: string) {
+    this.addDepInternal(name, version);
   }
 
-  public async removeDependency(name: string) {
+  public removeDependency(name: string) {
     const packageJson = this.packageJson;
     delete packageJson.dependencies[name];
     this.packageJson = packageJson;
   }
 
-  public async addDevDependency(name: string, version: string, override?: boolean) {
-    this.addDepInternal(name, version, override, 'dev');
+  public addDevDependency(name: string, version?: string) {
+    this.addDepInternal(name, version, 'dev');
   }
 
-  public async removeDevDependency(name: string) {
+  public removeDevDependency(name: string) {
     const packageJson = this.packageJson;
     delete packageJson.devDependencies[name];
     this.packageJson = packageJson;
   }
 
-  public async install() {}
+  /**
+   * install all deps from this.deps & this.devDeps
+   */
+  public async install() {
+    const agent = await detect({});
+
+    if (this.dependencies.length) {
+      const depsCommand = getCommand(agent, 'install', this.dependencies);
+      await execaCommand(depsCommand.replaceAll('"', ''));
+    }
+
+    if (this.devDependencies.length) {
+      const devDepsCommand = getCommand(agent, 'install', this.devDependencies);
+      await execaCommand(devDepsCommand.replaceAll('"', ''));
+    }
+  }
 
   public get packageJson(): PackageJson {
     return JSON.parse(readFileSync(this.packageJsonPath, 'utf8'));
@@ -89,15 +112,12 @@ export class Factory {
     writeFileSync(this.packageJsonPath, JSON.stringify(content, undefined, 2), 'utf8');
   }
 
-  // eslint-disable-next-line max-params
-  private addDepInternal(name: string, version: string, override: boolean, type?: 'dev') {
-    const field = type === 'dev' ? 'devDependencies' : 'dependencies';
-    const packageJson = this.packageJson;
-    const deps = packageJson[field];
-
-    !override && assert(deps[name], `${field} ${name} already exist`);
-
-    packageJson[name] = version;
-    this.packageJson = packageJson;
+  private addDepInternal(name: string, version = 'latest', type?: 'dev') {
+    const pkg = `${name}@${version}`;
+    if (type === 'dev') {
+      this.devDependencies.push(pkg);
+    } else {
+      this.dependencies.push(pkg);
+    }
   }
 }
