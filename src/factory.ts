@@ -7,7 +7,6 @@ import { pkgUpSync } from 'pkg-up';
 import type { PackageJson } from 'type-fest';
 
 export class Factory {
-  // public cwd: string;
   public packageJsonPath: string;
   public projectPath: string;
   private dependencies: string[];

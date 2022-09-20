@@ -28,9 +28,13 @@ if (argv._.length) {
       ],
       instructions: false,
       // @ts-ignore onRender exists https://github.com/terkelg/prompts#onrender
-      onRender(kleur) {},
+      // onRender(kleur) {},
     },
   ])) as { choices: string[] };
+
+  if (!choices || !choices.length) {
+    process.exit(0);
+  }
 
   const tasks = new Listr([]);
 
