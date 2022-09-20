@@ -11,6 +11,7 @@ export function defineEslintGenerator() {
       factory.addDevDependency('eslint-define-config');
       await factory.install();
 
+      // TODO consider prettier
       await factory.createFileFromTemplate('.eslintrc.cjs', join(__dirname(import.meta), './eslintrc.template'));
       await factory.createFileFromTemplate('.eslintignore', join(__dirname(import.meta), './eslintignore.template'));
     },
