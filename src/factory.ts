@@ -23,7 +23,8 @@ export class Factory {
     this.devDependencies = [];
   }
 
-  /** create new file
+  /**
+   * Create new file
    * @param path file path relative to projectPath
    * @param content file content
    */
@@ -41,7 +42,8 @@ export class Factory {
     writeFileSync(filePath, template, 'utf8');
   }
 
-  /** remove file
+  /**
+   * Remove file
    * @param path file path relative to projectPath
    */
   public async removeFile(path: string) {
@@ -51,7 +53,8 @@ export class Factory {
     }
   }
 
-  public async addScript(name: string, content: string, override?: false) {
+  /** Add script in scripts field */
+  public addScript(name: string, content: string, override?: boolean) {
     const packageJson = this.packageJson;
     if (!override) {
       assert(packageJson.scripts[name], `script ${name} already exist`);
@@ -60,9 +63,25 @@ export class Factory {
     this.packageJson = packageJson;
   }
 
-  public async removeScript(name: string) {
+  public removeScript(name: string) {
     const packageJson = this.packageJson;
     delete packageJson.scripts[name];
+    this.packageJson = packageJson;
+  }
+
+  /** Add field to package.json */
+  public addField(name: string, content: string | object, override?: boolean) {
+    const packageJson = this.packageJson;
+    if (!override) {
+      assert(packageJson[name], `field ${name} already exist`);
+    }
+    packageJson[name] = content;
+    this.packageJson = packageJson;
+  }
+
+  public removeField(name: string) {
+    const packageJson = this.packageJson;
+    delete packageJson[name];
     this.packageJson = packageJson;
   }
 
@@ -84,6 +103,10 @@ export class Factory {
     const packageJson = this.packageJson;
     delete packageJson.devDependencies[name];
     this.packageJson = packageJson;
+  }
+
+  public async execa(command: string) {
+    return await execaCommand(command, { stdio: 'inherit' });
   }
 
   /**
